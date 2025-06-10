@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>NeedToKnow Tech</title>
   <style>
+    /* Basic Reset & Global Styling */
     * {
       margin: 0;
       padding: 0;
@@ -16,6 +17,7 @@
       background-color: #f8f9fa;
     }
 
+    /* Hero Section */
     .hero {
       background: url("images/main.jpg") no-repeat center center/cover;
       height: 60vh;
@@ -48,6 +50,7 @@
       margin: 0 auto;
     }
 
+    /* Services Section */
     .services {
       background: #ffffff;
       padding: 40px 20px;
@@ -56,7 +59,7 @@
     .services h2 {
       font-size: 2rem;
       margin-bottom: 1rem;
-      color: #003366;
+      color: #003366; /* Dark blue tone */
     }
     .services p {
       font-size: 1rem;
@@ -82,6 +85,7 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
+    /* Contact Section */
     .contact {
       background: url("images/contact.jpg") no-repeat center center/cover;
       color: #ffffff;
@@ -111,7 +115,7 @@
       margin-bottom: 1rem;
     }
     .contact a {
-      color: #ffdd57;
+      color: #ffdd57; /* A contrasting highlight color */
       text-decoration: none;
       font-weight: bold;
     }
@@ -119,6 +123,7 @@
       text-decoration: underline;
     }
 
+    /* Footer */
     .footer {
       background-color: #e2e3e5;
       text-align: center;
@@ -127,6 +132,7 @@
       font-size: 0.9rem;
     }
 
+    /* Responsive Media Queries */
     @media (max-width: 768px) {
       .hero h1 {
         font-size: 2.2rem;
@@ -134,55 +140,6 @@
       .service-list {
         flex-direction: column;
       }
-    }
-
-    /* Chat Widget */
-    #chat-widget {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 9999;
-    }
-    #chat-toggle {
-      background-color: #003366;
-      color: white;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    #chat-box {
-      display: none;
-      margin-top: 10px;
-      width: 300px;
-      height: 400px;
-      background-color: white;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-    #chat-messages {
-      flex: 1;
-      padding: 10px;
-      overflow-y: auto;
-      font-size: 0.9rem;
-      color: #333;
-    }
-    #chat-box input {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      outline: none;
-    }
-    #chat-box button {
-      background-color: #003366;
-      color: white;
-      border: none;
-      padding: 10px;
-      cursor: pointer;
     }
   </style>
 </head>
@@ -230,68 +187,9 @@
     &copy; <span id="year"></span> NeedToKnow Tech. All rights reserved.
   </footer>
 
-  <!-- Chat Widget -->
-  <div id="chat-widget">
-    <button id="chat-toggle">Chat</button>
-    <div id="chat-box">
-      <div id="chat-messages"></div>
-      <div style="display: flex; border-top: 1px solid #eee;">
-        <input type="text" id="chat-input" placeholder="Type a message..." />
-        <button id="chat-send">Send</button>
-      </div>
-    </div>
-  </div>
-
   <script>
-    // Update year
+    // Auto-update footer year
     document.getElementById('year').textContent = new Date().getFullYear();
-
-    // Chat Logic
-    const chatToggle = document.getElementById('chat-toggle');
-    const chatBox = document.getElementById('chat-box');
-    const chatSend = document.getElementById('chat-send');
-    const chatInput = document.getElementById('chat-input');
-    const chatMessages = document.getElementById('chat-messages');
-
-    chatToggle.addEventListener('click', () => {
-      chatBox.style.display = chatBox.style.display === 'none' || chatBox.style.display === '' ? 'flex' : 'none';
-    });
-
-    chatSend.addEventListener('click', async () => {
-      const userMessage = chatInput.value.trim();
-      if (!userMessage) return;
-
-      const userMsgElem = document.createElement('div');
-      userMsgElem.textContent = "You: " + userMessage;
-      chatMessages.appendChild(userMsgElem);
-      chatInput.value = "";
-
-      try {
-        const response = await fetch('https://api.needtoknowtech.com.au/ollama/api/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer sk-d7fe04df21f54d1db871a17bf2588e22'
-          },
-          body: JSON.stringify({
-            stream: false,
-            model: "phi4:14b",
-            messages: [{ role: "user", content: userMessage }]
-          })
-        });
-
-        const data = await response.json();
-        const aiMessage = data.message?.content || 'No response received.';
-        const aiMsgElem = document.createElement('div');
-        aiMsgElem.textContent = "AI: " + aiMessage;
-        chatMessages.appendChild(aiMsgElem);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-      } catch (error) {
-        const errorElem = document.createElement('div');
-        errorElem.textContent = "AI: Error contacting server.";
-        chatMessages.appendChild(errorElem);
-      }
-    });
   </script>
 </body>
 </html>
