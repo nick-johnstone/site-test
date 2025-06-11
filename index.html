@@ -146,9 +146,10 @@
     #chat-toggle {
       background-color: #003366;
       color: white;
-      padding: 10px 15px;
+      padding: 12px 20px;
       border: none;
-      border-radius: 5px;
+      border-radius: 25px;
+      font-size: 1rem;
       cursor: pointer;
     }
     #chat-box {
@@ -243,10 +244,10 @@
   </div>
 
   <script>
-    // Update year
+    // Update footer year
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Chat Logic
+    // Chat logic
     const chatToggle = document.getElementById('chat-toggle');
     const chatBox = document.getElementById('chat-box');
     const chatSend = document.getElementById('chat-send');
@@ -263,6 +264,7 @@
 
       const userMsgElem = document.createElement('div');
       userMsgElem.textContent = "You: " + userMessage;
+      userMsgElem.style.color = '#000000';
       chatMessages.appendChild(userMsgElem);
       chatInput.value = "";
 
@@ -284,12 +286,20 @@
         const aiMessage = data.message?.content || 'No response received.';
         const aiMsgElem = document.createElement('div');
         aiMsgElem.textContent = "AI: " + aiMessage;
+        aiMsgElem.style.color = '#0033cc';
         chatMessages.appendChild(aiMsgElem);
         chatMessages.scrollTop = chatMessages.scrollHeight;
       } catch (error) {
         const errorElem = document.createElement('div');
         errorElem.textContent = "AI: Error contacting server.";
         chatMessages.appendChild(errorElem);
+      }
+    });
+
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        chatSend.click();
       }
     });
   </script>
