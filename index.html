@@ -94,17 +94,81 @@
     @media (max-width: 1024px){.grid{grid-template-columns:repeat(3,1fr)}}
     @media (max-width: 640px){.grid{grid-template-columns:1fr}}
 
-    /* Rotating facts */
-    section.facts{padding:34px 20px}
-    .facts .panel{position:relative;overflow:hidden;border-radius:var(--radius);background:linear-gradient(180deg, rgba(2,6,23,.55), rgba(2,6,23,.9));border:1px solid rgba(148,163,184,.2)}
-    .facts h2{font-size:1.5rem;margin-bottom:10px}
-    .facts p.lead{color:var(--muted);margin-bottom:12px}
-    .fact-viewport{position:relative;min-height:110px}
-    .fact{position:absolute;inset:0;display:flex;align-items:center;padding:18px 20px;font-size:1rem;opacity:0;transition:opacity 400ms ease}
-    .fact.active{opacity:1}
+    /* Rotating facts — upgraded */
+    section.facts{padding:42px 20px}
+    .facts .panel{
+      position:relative;overflow:hidden;border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(2,6,23,.55), rgba(2,6,23,.9));
+      border:1px solid rgba(148,163,184,.2);
+      box-shadow: 0 10px 30px rgba(2,6,23,.35), inset 0 0 40px rgba(34,211,238,.06);
+    }
+    .facts .panel::after{
+      /* subtle moving glow behind text */
+      content:"";position:absolute;inset:-2px;pointer-events:none;
+      background:
+        radial-gradient(600px 120px at var(--beam-x,12%) 20%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(600px 120px at calc(100% - var(--beam-x,12%)) 80%, rgba(56,189,248,.09), transparent 60%);
+      transition: .6s;
+    }
+    .facts h2{font-size:1.7rem;margin-bottom:12px}
+    .facts p.lead{color:var(--muted);margin-bottom:14px}
+    .fact-viewport{position:relative;min-height:140px}
+
+    .fact{
+      position:absolute;inset:0;display:flex;align-items:center;
+      padding:22px 22px;font-size:1.25rem;line-height:1.5;letter-spacing:.2px;
+      opacity:0;transform:translateY(14px) rotateX(-10deg) scale(.98);
+      filter:blur(6px);
+      transition:opacity 480ms ease, transform 520ms cubic-bezier(.2,.8,.2,1), filter 520ms ease;
+      z-index:0;
+    }
+    .fact.active{
+      opacity:1;transform:translateY(0) rotateX(0) scale(1);filter:blur(0);
+      z-index:2;
+    }
+
+    /* vivid in/out keyframes applied via JS classes for smoother sequencing */
+    @keyframes factIn{
+      0%{opacity:0;transform:translateY(16px) rotateX(-18deg) scale(.96);filter:blur(8px)}
+      100%{opacity:1;transform:translateY(0) rotateX(0) scale(1);filter:blur(0)}
+    }
+    @keyframes factOut{
+      0%{opacity:1;transform:translateY(0) rotateX(0) scale(1);filter:blur(0)}
+      100%{opacity:0;transform:translateY(-16px) rotateX(18deg) scale(.98);filter:blur(8px)}
+    }
+    .fact.animate-in{animation: factIn 520ms cubic-bezier(.2,.8,.2,1) both; z-index:2;}
+    .fact.animate-out{animation: factOut 480ms cubic-bezier(.2,.8,.2,1) both; z-index:1;}
+
+    .facts strong{
+      font-weight:800;
+      background-image:linear-gradient(90deg, var(--f1, var(--accent)), var(--f2, var(--accent-2)));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      text-decoration:none;
+    }
+
     .dots{display:flex;gap:6px;justify-content:center;padding:10px}
-    .dot{width:8px;height:8px;border-radius:10px;background:rgba(148,163,184,.35);border:1px solid rgba(148,163,184,.3)}
-    .dot.active{background:var(--accent)}
+    .dot{
+      width:9px;height:9px;border-radius:10px;background:rgba(148,163,184,.35);
+      border:1px solid rgba(148,163,184,.3);
+      transform:scale(1);transition:transform .2s ease, background .2s ease, border-color .2s ease;
+    }
+    .dot.active{
+      background:var(--accent);transform:scale(1.25);border-color:rgba(34,211,238,.6)
+    }
+
+    /* responsive type sizes */
+    @media (max-width: 900px){
+      .fact{font-size:1.15rem;padding:20px}
+    }
+    @media (max-width: 640px){
+      .fact-viewport{min-height:120px}
+      .fact{font-size:1.05rem;padding:18px}
+    }
+
+    /* Respect reduced-motion */
+    @media (prefers-reduced-motion: reduce){
+      .fact, .fact.animate-in, .fact.animate-out{transition:none;animation:none;filter:none;transform:none}
+    }
 
     /* Contact */
     .contact{padding:38px 20px}
@@ -296,21 +360,77 @@
     // Keyboard support
     window.addEventListener('keydown', (e)=>{ if(e.key==='ArrowLeft') go(-1); if(e.key==='ArrowRight') go(1); });
 
-    // ----- Facts rotator -----
+    // ----- Facts rotator (upgraded) -----
+    const viewport = document.getElementById('facts');
+    const panel = document.querySelector('.facts .panel');
     const facts = Array.from(document.querySelectorAll('#facts .fact'));
     const dotsC = document.getElementById('factDots');
+
+    // palette used to tint <strong> gradient each step
+    const palette = [
+      ['#22d3ee','#06b6d4'], // cyan
+      ['#a78bfa','#8b5cf6'], // violet
+      ['#f59e0b','#f97316'], // amber
+      ['#34d399','#10b981'], // emerald
+      ['#f472b6','#ec4899'], // pink
+      ['#60a5fa','#3b82f6'], // blue
+      ['#f43f5e','#ef4444'], // rose
+      ['#84cc16','#22c55e'], // lime/green
+      ['#fde047','#f59e0b'], // yellow/amber
+      ['#7dd3fc','#38bdf8']  // sky
+    ];
+
+    // build dots
     facts.forEach((_, idx)=>{
-      const b = document.createElement('div');b.className='dot'+(idx===0?' active':'');
-      b.addEventListener('click', ()=>{ show(idx); });
+      const b = document.createElement('div');
+      b.className = 'dot' + (idx===0?' active':'');
+      b.addEventListener('click', ()=> show(idx));
       dotsC.appendChild(b);
     });
     const dots = Array.from(dotsC.children);
 
+    // set initial gradient tint
+    (function initTint(){
+      const [c1, c2] = palette[0];
+      viewport.style.setProperty('--f1', c1);
+      viewport.style.setProperty('--f2', c2);
+    })();
+
     let f = 0;
     function show(nextIdx){
-      facts[f].classList.remove('active'); dots[f].classList.remove('active');
-      f = nextIdx; facts[f].classList.add('active'); dots[f].classList.add('active');
+      if(nextIdx === f) return;
+
+      const current = facts[f];
+      const nextFact = facts[nextIdx];
+
+      // animate out current, then drop its 'active'
+      current.classList.add('animate-out');
+      current.addEventListener('animationend', function handler(){
+        current.classList.remove('animate-out','active');
+        current.removeEventListener('animationend', handler);
+      });
+
+      // animate in next
+      nextFact.classList.add('active','animate-in');
+      nextFact.addEventListener('animationend', function handler2(){
+        nextFact.classList.remove('animate-in');
+        nextFact.removeEventListener('animationend', handler2);
+      });
+
+      // update dots
+      dots[f].classList.remove('active');
+      dots[nextIdx].classList.add('active');
+
+      // update gradient tint + background beam position
+      const [c1, c2] = palette[nextIdx % palette.length];
+      viewport.style.setProperty('--f1', c1);
+      viewport.style.setProperty('--f2', c2);
+      panel.style.setProperty('--beam-x', Math.floor(Math.random()*80 + 10) + '%');
+
+      f = nextIdx;
     }
+
+    // auto-advance
     setInterval(()=>{ show( (f+1) % facts.length ); }, 4200);
   </script>
 </body>
