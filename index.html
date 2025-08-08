@@ -139,12 +139,17 @@
     .fact.animate-in{animation: factIn 520ms cubic-bezier(.2,.8,.2,1) both; z-index:2;}
     .fact.animate-out{animation: factOut 480ms cubic-bezier(.2,.8,.2,1) both; z-index:1;}
 
-    .facts strong{
-      font-weight:800;
-      background-image:linear-gradient(90deg, var(--f1, var(--accent)), var(--f2, var(--accent-2)));
-      -webkit-background-clip:text;background-clip:text;color:transparent;
-      text-decoration:none;
-    }
+.facts strong{
+  font-weight:800;
+  background-image:linear-gradient(90deg, var(--f1, var(--accent)), var(--f2, var(--accent-2)));
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent; 
+  -webkit-text-fill-color: transparent; /* improves Safari behavior */
+  text-decoration:none;
+
+  /* NEW: ensure visible spacing around highlighted words */
+  margin-inline: .2em;
+}
 
     .dots{display:flex;gap:6px;justify-content:center;padding:10px}
     .dot{
@@ -286,16 +291,16 @@
       <p class="lead">Short, factual points rotate below. These also work well as social proof banners.</p>
       <div class="panel">
         <div class="fact-viewport" id="facts">
-          <div class="fact active">AI  <strong> workflows </strong>  orchestrate multiple steps (ingest → reason → act) reliably across tools and data sources.</div>
-          <div class="fact">An  <strong> agent </strong> is a system that plans, calls tools/APIs, observes results, and iterates until the goal is reached.</div>
-          <div class="fact"><strong> Local hosting </strong>  keeps prompts, context and outputs on your infrastructure, reducing third party data exposure.</div>
-          <div class="fact">Local models provide <strong> predictable cost </strong> (hardware bounded) instead of variable per token fees.</div>
-          <div class="fact">Running inference close to data lowers <strong> latency </strong> and avoids external rate limits or outages.</div>
-          <div class="fact">Open source models can be <strong> customised </strong> (fine tuned, adapters) to your domain and compliance needs.</div>
-          <div class="fact">Workflows add <strong> guardrails </strong>: approvals, policy checks, and audit logs around every automated action.</div>
-          <div class="fact">Agents integrate with <strong> existing systems </strong> (IDAM, ticketing, CRM, RPA) to reduce swivel chair work.</div>
-          <div class="fact">Private AI improves <strong> compliance </strong> with data residency (e.g., AU/EU), retention and classification policies.</div>
-          <div class="fact">Observability: capture <strong> traces & metrics </strong> so humans can review, override, and continuously improve.</div>
+          <div class="fact active">AI<strong> workflows </strong>orchestrate multiple steps (ingest → reason → act) reliably across tools and data sources.</div>
+          <div class="fact">An<strong> agent </strong>is a system that plans, calls tools/APIs, observes results, and iterates until the goal is reached.</div>
+          <div class="fact"><strong> Local hosting </strong>keeps prompts, context and outputs on your infrastructure, reducing third party data exposure.</div>
+          <div class="fact">Local models provide<strong> predictable cost </strong>(hardware bounded) instead of variable per token fees.</div>
+          <div class="fact">Running inference close to data lowers<strong> latency </strong>and avoids external rate limits or outages.</div>
+          <div class="fact">Open source models can be<strong> customised </strong>(fine tuned, adapters) to your domain and compliance needs.</div>
+          <div class="fact">Workflows add<strong> guardrails </strong>, approvals, policy checks, and audit logs around every automated action.</div>
+          <div class="fact">Agents integrate with<strong> existing systems </strong>(IDAM, ticketing, CRM, RPA) to reduce swivel chair work.</div>
+          <div class="fact">Private AI improves<strong> compliance </strong>with data residency (e.g., AU/EU), retention and classification policies.</div>
+          <div class="fact">Observability, capture<strong> traces & metrics </strong>so humans can review, override, and continuously improve.</div>
         </div>
         <div class="dots" id="factDots" aria-hidden="true"></div>
       </div>
